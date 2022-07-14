@@ -8,6 +8,7 @@ use App\Models\Shift;
 use App\Models\Staff;
 use App\Models\StaffAddress;
 use App\Notifications\AdminNotified;
+use App\Notifications\AdminStarted;
 use App\Notifications\StaffNoChecked;
 use App\Notifications\StaffNoStart;
 use App\Notifications\StaffRequested;
@@ -91,7 +92,6 @@ class AutoNotifyService
                                         Log::debug($staff->email . ' confirm_today: Error ' . $e->getMessage());
                                     }
 
-
                                     $notify_count += 1;
                                     if ($i == $alert_count - 1) {
                                         $object = array(
@@ -112,7 +112,16 @@ class AutoNotifyService
                                 }
                             }
                         }
-                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 10)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 15))) {
+                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 9)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 11))) {
+                            $type = config('constants.admin_notify.confirm_start');
+                            try {
+                                if (isset($staff->fcm_token)) $staff->notify(new AdminStarted($type, $shift));
+                                Log::debug($staff->email . ' confirm_start:' . $now . '==' . \Carbon\Carbon::today()->addMinutes($notify_time));
+                            } catch (\Exception $e) {
+                                Log::debug($staff->email . ' confirm_today: Error ' . $e->getMessage());
+                            }
+                        }
+                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 14)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 16))) {
                             if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id == config('constants.staff_status.already')) {
                                 $shift->staff_status_id = config('constants.staff_status.warning');
                                 $shift->save();

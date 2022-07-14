@@ -39,6 +39,7 @@ return [
         'leave' => 9,
         'break' => 10,
         'night_break' => 11,
+        'confirm_start' => 12,
     ],
     'admin_confirm_type' => [
         'reject' => 0,
