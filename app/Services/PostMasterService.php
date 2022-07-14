@@ -109,36 +109,25 @@ class PostMasterService
 
     public function addPost($params)
     {
+        $posts = array();
         if(isset($params["p_weeks"])){
             foreach ($params["p_weeks"] as $week){
-                $post = Post::updateOrCreate(
+                $posts[] = Post::updateOrCreate(
                     [
                         "field_id" => $params["field_id"],
                         "p_week" => $week
                     ],
                     []
                 );
-
-                foreach ($params["post_times"] as $one){
-                    $post_time = PostTime::updateOrCreate(
-                        [
-                            "post_id" => $post->id,
-                            "s_time" => $one["s_time"],
-                            "e_time" => $one["e_time"]
-                        ],
-                        [
-                            "number" => $one["number"]
-                        ]
-                    );
-                }
             }
         }
         else if(isset($params["s_date"])){
-            $post = new Post();
-            $post->field_id = $params["field_id"];
-            $post->s_date = $params["s_date"];
-            $post->e_date = $params["e_date"];
-            $post->save();
+            $post_date = new Post();
+            $post_date->field_id = $params["field_id"];
+            $post_date->s_date = $params["s_date"];
+            $post_date->e_date = $params["e_date"];
+            $post_date->save();
+            $posts[] = $post_date;
         }
 
         $spacial_post_list = [];
@@ -152,12 +141,18 @@ class PostMasterService
         }
 
         foreach ($params["post_times"] as $one){
-            $post_time = new PostTime();
-            $post_time->post_id = $post->id;
-            $post_time->s_time = $one["s_time"];
-            $post_time->e_time = $one["e_time"];
-            $post_time->number = $one["number"];
-            $post_time->save();
+            foreach ($posts as $post){
+                PostTime::updateOrCreate(
+                    [
+                        "post_id" => $post->id,
+                        "s_time" => $one["s_time"],
+                        "e_time" => $one["e_time"]
+                    ],
+                    [
+                        "number" => $one["number"]
+                    ]
+                );
+            }
 
             foreach ($spacial_post_list as $spacial_post){
                 $post_time = new PostTime();
@@ -172,28 +167,16 @@ class PostMasterService
 
     public function updatePost($params)
     {
+        $posts = array();
         if(isset($params["p_weeks"])){
             foreach ($params["p_weeks"] as $week){
-                $post = Post::updateOrCreate(
+                $posts[] = Post::updateOrCreate(
                     [
                         "field_id" => $params["field_id"],
                         "p_week" => $week
                     ],
                     []
                 );
-
-                foreach ($params["post_times"] as $one){
-                    $post_time = PostTime::updateOrCreate(
-                        [
-                            "post_id" => $post->id,
-                            "s_time" => $one["s_time"],
-                            "e_time" => $one["e_time"]
-                        ],
-                        [
-                            "number" => $one["number"]
-                        ]
-                    );
-                }
             }
         }
         else if(isset($params["s_date"])){
@@ -202,6 +185,7 @@ class PostMasterService
             $post->s_date = $params["s_date"];
             $post->e_date = $params["e_date"];
             $post->save();
+            $posts[] = $post;
         }
 
         $spacial_post_list = [];
@@ -215,16 +199,18 @@ class PostMasterService
         }
 
         foreach ($params["post_times"] as $one){
-            PostTime::updateOrCreate(
-                [
-                    "post_id" => $post->id,
-                    "s_time" => $one["s_time"],
-                    "e_time" => $one["e_time"]
-                ],
-                [
-                    "number" => $one["number"]
-                ]
-            );
+            foreach ($posts as $post){
+                PostTime::updateOrCreate(
+                    [
+                        "post_id" => $post->id,
+                        "s_time" => $one["s_time"],
+                        "e_time" => $one["e_time"]
+                    ],
+                    [
+                        "number" => $one["number"]
+                    ]
+                );
+            }
 
             foreach ($spacial_post_list as $spacial_post){
                 $post_time = new PostTime();

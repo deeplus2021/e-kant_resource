@@ -92,7 +92,7 @@ class Staff extends Authenticatable
 
     public function staffAddresses()
     {
-        return $this->hasMany(StaffAddress::class, 'staff_id', 'id');
+        return $this->hasMany(StaffAddress::class, 'staff_id', 'id')->orderBy('created_at', 'desc');
     }
 
     public function staffFields()

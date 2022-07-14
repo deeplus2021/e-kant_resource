@@ -37,10 +37,14 @@ class CreateTShiftTable extends Migration
 
             $table->unsignedTinyInteger("staff_status_id")->nullable()->comment("staff status");
 
+            $table->boolean("yesterday_no_check")->nullable()->comment("前日確認");
             $table->timestamp("yesterday_checked_at")->nullable()->comment("前日確認");
+
+            $table->boolean("today_no_check")->nullable()->comment("当日確認");
             $table->timestamp("today_checked_at")->nullable()->comment("当日確認");
             $table->boolean("health_status")->nullable()->comment("健康状态");
 
+            $table->timestamp("start_check_at")->nullable()->comment("出発確認");
             $table->timestamp("start_checked_at")->nullable()->comment("出発確認");
 
             $table->timestamp("arrive_checked_at")->nullable()->comment("到着確認");

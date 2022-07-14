@@ -117,66 +117,70 @@ class AttendanceMasterService
         for ($i = 0; $i <= $diff; $i++) {
             $work_date = $s_date->copy()->addDays($i);
 
-            $shift_data = Shift::where("staff_id", $params["staff_id"])
+            $shift_data_list = Shift::where("staff_id", $params["staff_id"])
                 ->with("staff")
                 ->with("admin")
                 ->with("field")
                 ->whereDate("shift_date", $work_date)
-                ->first();
+                ->get();
+            if(count($shift_data_list) == 0){
+                $shift_data_list = [null];
+            }
+            foreach($shift_data_list as $shift_data){
+                $end_of_month = $work_date->copy()->endOfMonth()->format('Y-m-d');
 
-            $end_of_month = $work_date->copy()->endOfMonth()->format('Y-m-d');
+                $over_time = 0;
+                if ($work_date->equalTo(\Carbon\Carbon::parse($end_of_month))) {
+                    $start_of_month = $work_date->copy()->startOfMonth()->format('Y-m-d');
+                    $days_month = \Carbon\Carbon::parse($work_date)->daysInMonth;
+                    $sum_work = DB::table("t_shift")
+                        ->where("staff_id", $params["staff_id"])
+                        ->whereNull("rest_checked_at")
+                        ->whereBetween("shift_date", [$start_of_month, $end_of_month])
+                        ->sum(DB::raw("TIMESTAMPDIFF(MINUTE, arrive_checked_at, leave_checked_at)-IF(break_time IS NOT NULL,break_time,0)-IF(night_break_time IS NOT NULL,night_break_time,0)"));
+                    if ($sum_work > $month_work_basic[$days_month]) {
+                        $over_time = $sum_work - $month_work_basic[$days_month];
+                    }
+                } else if ($work_date->dayOfWeek == 6) {
+                    $start_week = $work_date->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
+                    if(\Carbon\Carbon::parse($start_week->format("Y-m-d"))->lte(\Carbon\Carbon::parse($work_date->copy()->startOfMonth()->format('Y-m-d')))){
+                        $start_week = $work_date->copy()->startOfMonth();
+                    }
+                    $sum_work = DB::table("t_shift")
+                        ->where("staff_id", $params["staff_id"])
+                        ->whereNull("rest_checked_at")
+                        ->whereBetween("shift_date", [$start_week->format("Y-m-d"), $work_date])
+                        ->sum(DB::raw("TIMESTAMPDIFF(MINUTE, arrive_checked_at, leave_checked_at)-IF(break_time IS NOT NULL,break_time,0)-IF(night_break_time IS NOT NULL,night_break_time,0)"));
 
-            $over_time = 0;
-            if ($work_date->equalTo(\Carbon\Carbon::parse($end_of_month))) {
-                $start_of_month = $work_date->copy()->startOfMonth()->format('Y-m-d');
-                $days_month = \Carbon\Carbon::parse($work_date)->daysInMonth;
-                $sum_work = DB::table("t_shift")
-                    ->where("staff_id", $params["staff_id"])
-                    ->whereNull("rest_checked_at")
-                    ->whereBetween("shift_date", [$start_of_month, $end_of_month])
-                    ->sum(DB::raw("TIMESTAMPDIFF(MINUTE, arrive_checked_at, leave_checked_at)-IF(break_time IS NOT NULL,break_time,0)-IF(night_break_time IS NOT NULL,night_break_time,0)"));
-                if ($sum_work > $month_work_basic[$days_month]) {
-                    $over_time = $sum_work - $month_work_basic[$days_month];
-                }
-            } else if ($work_date->dayOfWeek == 6) {
-                $start_week = $work_date->copy()->startOfWeek(\Carbon\Carbon::SUNDAY);
-                if(\Carbon\Carbon::parse($start_week->format("Y-m-d"))->lte(\Carbon\Carbon::parse($work_date->copy()->startOfMonth()->format('Y-m-d')))){
-                    $start_week = $work_date->copy()->startOfMonth();
-                }
-                $sum_work = DB::table("t_shift")
-                    ->where("staff_id", $params["staff_id"])
-                    ->whereNull("rest_checked_at")
-                    ->whereBetween("shift_date", [$start_week->format("Y-m-d"), $work_date])
-                    ->sum(DB::raw("TIMESTAMPDIFF(MINUTE, arrive_checked_at, leave_checked_at)-IF(break_time IS NOT NULL,break_time,0)-IF(night_break_time IS NOT NULL,night_break_time,0)"));
-
-                if ($sum_work > 40 * 60) {
-                    $over_time = $sum_work - 40 * 60;
-                }
-            } else {
-                if (!isset($shift_data->rest_checked_at) && isset($shift_data->arrive_checked_at) && isset($shift_data->leave_checked_at)) {
-                    $work_time = \Carbon\Carbon::parse($shift_data->arrive_checked_at)->diffInMinutes(\Carbon\Carbon::parse($shift_data->leave_checked_at));
-                    $work_time -= isset($shift_data->break_time) ? $shift_data->break_time : 0;
-                    $work_time -= isset($shift_data->night_break_time) ? $shift_data->night_break_time : 0;
-                    if ($work_time > 8 * 60) {
-                        $over_time = $work_time - 8 * 60;
+                    if ($sum_work > 40 * 60) {
+                        $over_time = $sum_work - 40 * 60;
+                    }
+                } else {
+                    if (!isset($shift_data->rest_checked_at) && isset($shift_data->arrive_checked_at) && isset($shift_data->leave_checked_at)) {
+                        $work_time = \Carbon\Carbon::parse($shift_data->arrive_checked_at)->diffInMinutes(\Carbon\Carbon::parse($shift_data->leave_checked_at));
+                        $work_time -= isset($shift_data->break_time) ? $shift_data->break_time : 0;
+                        $work_time -= isset($shift_data->night_break_time) ? $shift_data->night_break_time : 0;
+                        if ($work_time > 8 * 60) {
+                            $over_time = $work_time - 8 * 60;
+                        }
                     }
                 }
-            }
 
-            if (!isset($shift_data)) {
-                $shift_data = (object)array(
-                    "staff" => Staff::find($params["staff_id"]),
-                    "shift_date" => $work_date->format("Y-m-d"),
-                    "over_time" => 0
-                );
-            }
+                if (!isset($shift_data)) {
+                    $shift_data = (object)array(
+                        "staff" => Staff::find($params["staff_id"]),
+                        "shift_date" => $work_date->format("Y-m-d"),
+                        "over_time" => 0
+                    );
+                }
 
-            if ($over_time > 0) {
-                $shift_data->over_time = $over_time;
-            } else {
-                $shift_data->over_time = null;
+                if ($over_time > 0) {
+                    $shift_data->over_time = $over_time;
+                } else {
+                    $shift_data->over_time = null;
+                }
+                $data[] = $shift_data;
             }
-            $data[] = $shift_data;
         }
         return $data;
     }

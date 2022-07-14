@@ -30,4 +30,10 @@ class Shift extends DefaultModel
     {
         return $this->hasOne(StaffStatus::class, 'id', 'staff_status_id');
     }
+
+    public function staffAddress()
+    {
+        return $this->hasOne(StaffAddress::class, 'id', 'staff_address_id');
+    }
+
 }

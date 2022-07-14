@@ -121,6 +121,8 @@ class StaffMasterService
         if(isset($params["desired_holiday"])){
             $staff->desired_holiday = $params["desired_holiday"];
         }
+        $staff->yesterday_flag = $params["yesterday_flag"];
+        $staff->today_flag = $params["today_flag"];
         $staff->save();
 
         StaffAddress::where("staff_id", $staff->id)->delete();
@@ -160,6 +162,8 @@ class StaffMasterService
         if(isset($params["desired_holiday"])){
             $staff->desired_holiday = $params["desired_holiday"];
         }
+        $staff->yesterday_flag = $params["yesterday_flag"];
+        $staff->today_flag = $params["today_flag"];
         $staff->save();
 
         StaffAddress::where("staff_id", $staff->id)->delete();

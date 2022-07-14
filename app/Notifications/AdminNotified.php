@@ -91,10 +91,12 @@ class AdminNotified extends Notification
                         AndroidNotification::create()
                             ->setColor('#0A0A0A')
                             ->setClickAction('MainActivity')
+                            ->setSound("default")
                     )
             )->setApns(
                 ApnsConfig::create()
                     ->setFcmOptions(ApnsFcmOptions::create()->setAnalyticsLabel('analytics_ios'))
+                    ->setPayload(['aps' => ['sound' => 'default']])
             );
     }
 }

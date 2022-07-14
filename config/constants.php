@@ -11,7 +11,7 @@ return [
         'late_time' => 1,
         'early_time' => 1,
         'over_time' => 15,
-        'start_distance' => 0.01 // km
+        'start_distance' => 0.1 // km
     ],
     'staff_roles' => [
         'super_admin' => 1,
