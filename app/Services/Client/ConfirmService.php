@@ -87,23 +87,23 @@ class ConfirmService
         $shift->staff_status_id = $status ? config('constants.staff_status.started') : config('constants.staff_status.warning');
         $shift->save();
 
-        if(!$status){
-            $staff = Auth::user();
-            $object = array(
-                'type' => 'スタッフの状況警告通知',
-                'sender' => $staff->name,
-                'content' => "自宅を出発していません。",
-                "shift_ids" => [$shift->id]
-            );
-            $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
-            $field_admins = $shift->field->cstaffs;
-            foreach ($field_admins as $field_admin) {
-                $field_admin->notify(new StaffNoStart($object));
-            }
-            foreach ($super_admins as $super_admin) {
-                $super_admin->notify(new StaffNoStart($object));
-            }
-        }
+//        if(!$status){
+//            $staff = Auth::user();
+//            $object = array(
+//                'type' => 'スタッフの状況警告通知',
+//                'sender' => $staff->name,
+//                'content' => "自宅を出発していません。",
+//                "shift_ids" => [$shift->id]
+//            );
+//            $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
+//            $field_admins = $shift->field->cstaffs;
+//            foreach ($field_admins as $field_admin) {
+//                $field_admin->notify(new StaffNoStart($object));
+//            }
+//            foreach ($super_admins as $super_admin) {
+//                $super_admin->notify(new StaffNoStart($object));
+//            }
+//        }
         return $status;
     }
 

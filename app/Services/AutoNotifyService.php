@@ -112,7 +112,7 @@ class AutoNotifyService
                                 }
                             }
                         }
-                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 9)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 11))) {
+                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 4)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 6))) {
                             if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id == config('constants.staff_status.already')) {
                                 $type = config('constants.admin_notify.confirm_start');
                                 try {
@@ -123,7 +123,7 @@ class AutoNotifyService
                                 }
                             }
                         }
-                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 19)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 21))) {
+                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 9)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 11))) {
                             if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id == config('constants.staff_status.already')) {
                                 $shift->staff_status_id = config('constants.staff_status.warning');
                                 $shift->save();
