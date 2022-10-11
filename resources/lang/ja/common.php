@@ -2,8 +2,8 @@
 
 return[
     "response"=>[
-        "success"=>"成功しました。",
-        "error"=>"失敗しました。"
+        "success"=>"成功",
+        "error"=>"エラー"
     ],
     "messages"=>[
         "logout"=>"ログアウト",

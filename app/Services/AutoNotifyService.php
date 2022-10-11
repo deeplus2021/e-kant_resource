@@ -28,7 +28,6 @@ class AutoNotifyService
             $shift_date = \Carbon\Carbon::parse($shift->shift_date);
             $s_time = $shift->s_time;
             $staff = $shift->staff;
-
             if ($shift_date->eq(\Carbon\Carbon::tomorrow())) {
                 if ($staff->yesterday_flag && !isset($shift->yesterday_checked_at)) {
                     for ($i = 0; $i < 3; $i++) {

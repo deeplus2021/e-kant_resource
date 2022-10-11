@@ -18,3 +18,4 @@ yarn-error.log
 source_change.7z
 /public/static
 /firebase_sdk
+/public/dist/static

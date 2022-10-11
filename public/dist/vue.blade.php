@@ -1,0 +1,4 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>e-KANTシステム</title><script>window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-144208445-2');</script><link href=./static/css/app.222cfec8beb4ba789325877c0ed21a3e.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=./static/js/manifest.df539af2c1adc4a14cac.js></script><script type=text/javascript src=./static/js/vendor.9beabad7e0b51383d925.js></script><script type=text/javascript src=./static/js/app.a4f7c260ac0c1ce2c66e.js></script></body><script async defer=defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtdP7kXuikoMGeuOjXqNthOGqFl8xa4iM"></script></html>

@@ -84,8 +84,13 @@ class ConfirmService
             }
         }
 
-        $shift->staff_status_id = $status ? config('constants.staff_status.started') : config('constants.staff_status.warning');
-        $shift->save();
+	if($status){
+            $shift->staff_status_id = config('constants.staff_status.started');
+            $shift->save();
+        }
+
+        //$shift->staff_status_id = $status ? config('constants.staff_status.started') : config('constants.staff_status.warning');
+        //$shift->save();
 
 //        if(!$status){
 //            $staff = Auth::user();
@@ -182,7 +187,7 @@ class ConfirmService
         $shift->leave_checked_at = $leave_checked_at;
         $e_time = \Carbon\Carbon::parse($shift->shift_date)->addMinutes($shift->e_time);
         //早退申請
-        if($leave_checked_at->diffInMinutes($e_time, false) > config('constants.system.leave_time')){
+        if($leave_checked_at->diffInMinutes($e_time, false) > 0){
             $shift->e_leave_at = now();
             $shift->e_leave_checked_at = null;
 
