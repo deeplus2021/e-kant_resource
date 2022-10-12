@@ -11,7 +11,7 @@ return [
         'late_time' => 1,
         'early_time' => 1,
         'over_time' => 15,
-        'start_distance' => 0.1 // km
+        'start_distance' => 0.2 // km
     ],
     'staff_roles' => [
         'super_admin' => 1,
@@ -26,6 +26,7 @@ return [
         'leaved' => 4,
         'space' => 5,
         'warning' => 6,
+        'condition' => 7,
     ],
     'admin_notify' => [
         'confirm_yesterday' => 1,

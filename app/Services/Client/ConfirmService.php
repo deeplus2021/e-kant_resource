@@ -32,6 +32,9 @@ class ConfirmService
         $shift->today_checked_at = now();
         $shift->health_status = $params["health_status"];
         $shift->staff_status_id = config('constants.staff_status.already');
+        if(!$params["health_status"]){
+            $shift->staff_status_id = config('constants.staff_status.condition');
+        }
         $shift->save();
 
         $staff = Auth::user();
