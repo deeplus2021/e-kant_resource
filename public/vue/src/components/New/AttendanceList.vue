@@ -101,8 +101,8 @@
                             let color = {}
                             if (params.row.arrive_checked_at) {
                                 time = this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.arrive_checked_at)
-                                const real_time = (new Date(params.row.arrive_checked_at)).getTime()
-                                const s_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.s_time * 60 * 1000
+                                const real_time = (new Date(params.row.arrive_checked_at.replace(' ', 'T'))).getTime()
+                                const s_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.s_time * 60 * 1000
                                 if ((s_time - real_time) > 10 * 60 * 1000) {
                                     color = {style: {color: "#00f"}}
                                 }
@@ -134,7 +134,7 @@
                                     return h('div', color, time)
                                 }
                                 else{
-                                    const s_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.s_time * 60 * 1000
+                                    const s_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.s_time * 60 * 1000
                                     if((new Date()).getTime() > s_time + 10 * 60 * 1000){
                                         return h('div', [
                                             h('span', {
@@ -165,8 +165,8 @@
                             let color = {}
                             if (params.row.leave_checked_at) {
                                 time = this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.leave_checked_at)
-                                const real_time = (new Date(params.row.leave_checked_at)).getTime()
-                                const e_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.e_time * 60 * 1000
+                                const real_time = (new Date(params.row.leave_checked_at.replace(' ', 'T'))).getTime()
+                                const e_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.e_time * 60 * 1000
                                 if ((real_time - e_time) > 10 * 60 * 1000) {
                                     color = {style: {color: "#00f"}}
                                 }
@@ -198,7 +198,7 @@
                                     return h('div', color, time)
                                 }
                                 else{
-                                    const e_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.e_time * 60 * 1000
+                                    const e_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.e_time * 60 * 1000
                                     if((new Date()).getTime() > e_time + 10 * 60 * 1000){
                                         return h('div', [
                                             h('span', {
@@ -282,7 +282,7 @@
                             }
                         }
                     },
-                    {
+                    /*{
                         title: '残業時間',
                         key:'',
                         align: 'center',
@@ -290,7 +290,7 @@
                             //TODO
                             return h('div', params.row.over_time ? this.$utils.Datetimes.num2hi(params.row.over_time):"")
                         }
-                    },
+                    },*/
                     {
                         title: "遅刻申請",
                         key: 'late',
@@ -320,8 +320,8 @@
                                 }
                             } else {
                                 if(params.row.arrive_checked_at && !params.row.late_checked_at){
-                                    const real_time = (new Date(params.row.arrive_checked_at)).getTime()
-                                    const s_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.s_time * 60 * 1000
+                                    const real_time = (new Date(params.row.arrive_checked_at.replace(' ', 'T'))).getTime()
+                                    const s_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.s_time * 60 * 1000
                                     if ((real_time - s_time) > 15 * 60 * 1000) {
                                         return h('div', [
                                             h('Button', {
@@ -378,9 +378,9 @@
                                 }
                             } else {
                                 if(params.row.leave_checked_at && !params.row.e_leave_checked_at){
-                                    const real_time = (new Date(params.row.leave_checked_at)).getTime()
-                                    const e_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.e_time * 60 * 1000
-                                    if ((e_time - real_time) > 36 * 60 * 1000) {
+                                    const real_time = (new Date(params.row.leave_checked_at.replace(' ', 'T'))).getTime()
+                                    const e_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.e_time * 60 * 1000
+                                    if ((e_time - real_time) > 30 * 60 * 1000) {
                                         return h('div', [
                                             h('Button', {
                                                 props: {
@@ -436,9 +436,9 @@
                                 }
                             } else {
                                 if(params.row.leave_checked_at && !params.row.over_time_checked_at){
-                                    const real_time = (new Date(params.row.leave_checked_at)).getTime()
-                                    const e_time = (new Date(params.row.shift_date + " 00:00:00")).getTime() + params.row.e_time * 60 * 1000
-                                    if ((real_time - e_time) > 36 * 60 * 1000) {
+                                    const real_time = (new Date(params.row.leave_checked_at.replace(' ', 'T'))).getTime()
+                                    const e_time = (new Date(params.row.shift_date + "T00:00:00")).getTime() + params.row.e_time * 60 * 1000
+                                    if ((real_time - e_time) > 30 * 60 * 1000) {
                                         return h('div', [
                                             h('Button', {
                                                 props: {
@@ -634,10 +634,40 @@
                 this.$Modal.confirm({
                     title: "遅刻申請承認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.arrive_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.arrive_checked_at)),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            _this.$set(row, '$isLoadingLate', true)
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                            }
+                                            confirmRequestLate(params).then(res => {
+                                                _this.$set(row, '$isLoadingLate', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingLate', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable:true,
                     onOk: () => {
                         _this.$set(row, '$isLoadingLate', true)
                         const params = {
@@ -655,20 +685,7 @@
                         })
                     },
                     onCancel: () => {
-                        _this.$set(row, '$isLoadingLate', true)
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                        }
-                        confirmRequestLate(params).then(res => {
-                            _this.$set(row, '$isLoadingLate', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingLate', false)
-                        })
+
                     },
                 })
             },
@@ -677,10 +694,39 @@
                 this.$Modal.confirm({
                     title: "早退申請承認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', _this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', _this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at)),
+                        h('Button',{
+                            style: {
+                                cursor: 'pointer',
+                                marginLeft: '15px',
+                                padding: '5px 10px'
+                            },
+                            props: {
+                                type: 'warning',
+                            },
+                            on: {
+                                click: () => {
+                                    const params = {
+                                        shift_id: row.id,
+                                        is_confirmed: 0
+                                    }
+                                    _this.$set(row, '$isLoadingLeave', true)
+                                    confirmRequestEarlyLeave(params).then(res => {
+                                        _this.$set(row, '$isLoadingLeave', false)
+                                        if (res.data.status == "success") {
+                                            _this.$Message.success('成功');
+                                            _this.getStaffAttendanceList()
+                                            this.$Modal.remove()
+                                        }
+                                    }).catch((error) => {
+                                        _this.$set(row, '$isLoadingLeave', false)
+                                    })
+                                }
+                            }
+                        }, '拒否(再申請)'
+                        )])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -697,21 +743,8 @@
                             _this.$set(row, '$isLoadingLeave', false)
                         })
                     },
+                    closable: true,
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0
-                        }
-                        _this.$set(row, '$isLoadingLeave', true)
-                        confirmRequestEarlyLeave(params).then(res => {
-                            _this.$set(row, '$isLoadingLeave', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingLeave', false)
-                        })
                     },
                 })
             },
@@ -720,10 +753,41 @@
                 this.$Modal.confirm({
                     title: "休日申請承認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', row.shift_date)])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', row.shift_date),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0
+                                            }
+                                            _this.$set(row, '$isLoadingRest', true)
+                                            confirmRequestRest(params).then(res => {
+                                                _this.$set(row, '$isLoadingRest', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingRest', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                    ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -741,20 +805,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0
-                        }
-                        _this.$set(row, '$isLoadingRest', true)
-                        confirmRequestRest(params).then(res => {
-                            _this.$set(row, '$isLoadingRest', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingRest', false)
-                        })
+
                     },
                 })
             },
@@ -763,10 +814,41 @@
                 this.$Modal.confirm({
                     title: "残業申請承認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', _this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', _this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at)),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0
+                                            }
+                                            _this.$set(row, '$isLoadingOver', true)
+                                            confirmRequestOverTime(params).then(res => {
+                                                _this.$set(row, '$isLoadingOver', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingOver', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -784,20 +866,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0
-                        }
-                        _this.$set(row, '$isLoadingOver', true)
-                        confirmRequestOverTime(params).then(res => {
-                            _this.$set(row, '$isLoadingOver', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingOver', false)
-                        })
+
                     },
                 })
             },
@@ -816,10 +885,42 @@
                                     row.alt_date = val
                                 }
                             }
-                        })])
+                        }),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                                alt_date: row.alt_date
+                                            }
+                                            _this.$set(row, '$isLoadingAlt', true)
+                                            confirmRequestAltDate(params).then(res => {
+                                                _this.$set(row, '$isLoadingAlt', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingAlt', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -838,21 +939,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                            alt_date: row.alt_date
-                        }
-                        _this.$set(row, '$isLoadingAlt', true)
-                        confirmRequestAltDate(params).then(res => {
-                            _this.$set(row, '$isLoadingAlt', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingAlt', false)
-                        })
+
                     },
                 })
             },
@@ -920,10 +1007,42 @@
                                     changed_time = val
                                 }
                             }
-                        })])
+                        }),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                                changed_time: changed_time
+                                            }
+                                            _this.$set(row, '$isLoadingArrive', true)
+                                            confirmRequestArrive(params).then(res => {
+                                                _this.$set(row, '$isLoadingArrive', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingArrive', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -942,21 +1061,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                            changed_time: changed_time
-                        }
-                        _this.$set(row, '$isLoadingArrive', true)
-                        confirmRequestArrive(params).then(res => {
-                            _this.$set(row, '$isLoadingArrive', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingArrive', false)
-                        })
+
                     },
                 })
             },
@@ -979,10 +1084,42 @@
                                     changed_time = val
                                 }
                             }
-                        })])
+                        }),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                                changed_time: changed_time
+                                            }
+                                            _this.$set(row, '$isLoadingLeave', true)
+                                            confirmRequestLeave(params).then(res => {
+                                                _this.$set(row, '$isLoadingLeave', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingLeave', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1001,21 +1138,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                            changed_time: changed_time
-                        }
-                        _this.$set(row, '$isLoadingLeave', true)
-                        confirmRequestLeave(params).then(res => {
-                            _this.$set(row, '$isLoadingLeave', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingLeave', false)
-                        })
+
                     },
                 })
             },
@@ -1035,10 +1158,42 @@
                                     changed_time = val
                                 }
                             }
-                        })])
+                        }),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                                break_changed_time: changed_time
+                                            }
+                                            _this.$set(row, '$isLoadingBreak', true)
+                                            confirmRequestBreak(params).then(res => {
+                                                _this.$set(row, '$isLoadingBreak', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingBreak', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
-                    cancelText: "拒否(再申請)",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1057,21 +1212,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                            break_changed_time: changed_time
-                        }
-                        _this.$set(row, '$isLoadingBreak', true)
-                        confirmRequestBreak(params).then(res => {
-                            _this.$set(row, '$isLoadingBreak', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingBreak', false)
-                        })
+
                     },
                 })
             },
@@ -1091,7 +1232,39 @@
                                     changed_time = val
                                 }
                             }
-                        })])
+                        }),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 0,
+                                                night_break_changed_time: changed_time
+                                            }
+                                            _this.$set(row, '$isLoadingNightBreak', true)
+                                            confirmRequestNightBreak(params).then(res => {
+                                                _this.$set(row, '$isLoadingNightBreak', false)
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            }).catch((error) => {
+                                                _this.$set(row, '$isLoadingNightBreak', false)
+                                            })
+                                        }
+                                    }
+                                }, '拒否(再申請)'
+                            )
+                        ])
                     },
                     okText: "承 認",
                     cancelText: "拒否(再申請)",
@@ -1113,21 +1286,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 0,
-                            night_break_changed_time: changed_time
-                        }
-                        _this.$set(row, '$isLoadingNightBreak', true)
-                        confirmRequestNightBreak(params).then(res => {
-                            _this.$set(row, '$isLoadingNightBreak', false)
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        }).catch((error) => {
-                            _this.$set(row, '$isLoadingNightBreak', false)
-                        })
+
                     },
                 })
             },
@@ -1188,9 +1347,37 @@
                 this.$Modal.confirm({
                     title: "遅刻確認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.arrive_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.arrive_checked_at)),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                canceled: 1,
+                                            }
+                                            confirmRequestLate(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            )
+                        ])
                     },
-                    cancelText: "取り消し",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1204,17 +1391,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            canceled: 1,
-                        }
-                        confirmRequestLate(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },
@@ -1223,9 +1400,37 @@
                 this.$Modal.confirm({
                     title: "早退確認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at)),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                canceled: 1
+                                            }
+                                            confirmRequestEarlyLeave(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            )
+                        ])
                     },
-                    cancelText: "取り消し",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1239,17 +1444,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            canceled: 1
-                        }
-                        confirmRequestEarlyLeave(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },
@@ -1258,9 +1453,37 @@
                 this.$Modal.confirm({
                     title: "休日確認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span', row.shift_date)])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span', row.shift_date),
+                            row.rest_checked_at ? h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                canceled: 1
+                                            }
+                                            confirmRequestRest(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            ):''
+                        ])
                     },
-                    cancelText:row.rest_checked_at ? "取り消し": null,
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1274,18 +1497,7 @@
                         })
                     },
                     onCancel: () => {
-                        if(!row.rest_checked_at) return true
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            canceled: 1
-                        }
-                        confirmRequestRest(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },
@@ -1294,9 +1506,37 @@
                 this.$Modal.confirm({
                     title: "残業確認",
                     render: (h) => {
-                        return h('div', {style: {'text-align': 'center'}}, [h('span',  this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at))])
+                        return h('div', {style: {'text-align': 'center'}}, [h('span',  this.$utils.Datetimes.ymdhis2hi(row.shift_date, row.leave_checked_at)),
+                            h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                canceled: 1
+                                            }
+                                            confirmRequestOverTime(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            )
+                        ])
                     },
-                    cancelText: "取り消し",
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1310,17 +1550,7 @@
                         })
                     },
                     onCancel: () => {
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            canceled: 1
-                        }
-                        confirmRequestOverTime(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },
@@ -1340,9 +1570,37 @@
                                     changed_date = val
                                 }
                             }
-                        })])
+                        }),
+                            row.alt_date ? h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                alt_date: null
+                                            }
+                                            confirmRequestAltDate(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            ): ''
+                        ])
                     },
-                    cancelText: row.alt_date ? "取り消し": null,
+                    closable: true,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1357,18 +1615,7 @@
                         })
                     },
                     onCancel: () => {
-                        if(!row.alt_date) return true
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            alt_date: null
-                        }
-                        confirmRequestAltDate(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },
@@ -1377,7 +1624,7 @@
                 let changed_time = row.arrive_checked_at ? row.arrive_checked_at : (row.field_s_time ? row.shift_date + " " + this.$utils.Datetimes.num2hi(row.field_s_time) + ":00" : this.$utils.Datetimes.getymdhis(new Date()))
                 changed_time = this.$utils.Datetimes.ymdhis2num(row.shift_date, changed_time)
                 let leave_time = row.leave_checked_at ? this.$utils.Datetimes.ymdhis2num(row.shift_date, row.leave_checked_at) : 2160
-                this.$Modal.confirm({
+                let modal = this.$Modal.confirm({
                     title: "勤務開始時間確認",
                     render: (h) => {
                         return h('div', {style: {'text-align': 'center'}}, [h('vTimeSelector', {
@@ -1390,10 +1637,37 @@
                                 'on-change': (val) => {
                                     changed_time = val
                                 }
-                            }
-                        })])
+                            }}),
+                            row.arrive_checked_at ? h('Button',{
+                                style: {
+                                    cursor: 'pointer',
+                                    marginLeft: '15px',
+                                    padding: '5px 10px'
+                                },
+                                props: {
+                                    type: 'warning',
+                                },
+                                on: {
+                                    click: () => {
+                                        if(!row.arrive_checked_at) return true
+                                        const params = {
+                                            shift_id: row.id,
+                                            is_confirmed: 2,
+                                            changed_time: null
+                                        }
+                                        confirmRequestArrive(params).then(res => {
+                                            if (res.data.status == "success") {
+                                                _this.$Message.success('成功');
+                                                _this.getStaffAttendanceList()
+                                                this.$Modal.remove();
+                                            }
+                                        })
+                                    }
+                                }
+                            }, '取り消し'
+                            ) : '']
+                        )
                     },
-                    cancelText: row.arrive_checked_at ? "取り消し" : null,
                     onOk: () => {
                         const params = {
                             shift_id: row.id,
@@ -1407,19 +1681,8 @@
                             }
                         })
                     },
+                    closable: true,
                     onCancel: () => {
-                        if(!row.arrive_checked_at) return true
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            changed_time: null
-                        }
-                        confirmRequestArrive(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
                     },
                 })
             },
@@ -1443,9 +1706,37 @@
                                     changed_time = val
                                 }
                             }
-                        })])
+                        }),
+                            row.leave_checked_at ? h('Button',{
+                                    style: {
+                                        cursor: 'pointer',
+                                        marginLeft: '15px',
+                                        padding: '5px 10px'
+                                    },
+                                    props: {
+                                        type: 'warning',
+                                    },
+                                    on: {
+                                        click: () => {
+                                            const params = {
+                                                shift_id: row.id,
+                                                is_confirmed: 2,
+                                                changed_time: null
+                                            }
+                                            confirmRequestLeave(params).then(res => {
+                                                if (res.data.status == "success") {
+                                                    _this.$Message.success('成功');
+                                                    _this.getStaffAttendanceList()
+                                                    this.$Modal.remove()
+                                                }
+                                            })
+                                        }
+                                    }
+                                }, '取り消し'
+                            ): ''
+                        ])
                     },
-                    cancelText: row.leave_checked_at ? "取り消し" : null,
+                    closable: true,
                     onOk: () => {
                         if(changed_time < arrive_time){
                             _this.$message.error("終了時間は、開始時間以上でなければなりません。")
@@ -1464,18 +1755,7 @@
                         })
                     },
                     onCancel: () => {
-                        if(!row.leave_checked_at) return true
-                        const params = {
-                            shift_id: row.id,
-                            is_confirmed: 2,
-                            changed_time: null
-                        }
-                        confirmRequestLeave(params).then(res => {
-                            if (res.data.status == "success") {
-                                _this.$Message.success('成功');
-                                _this.getStaffAttendanceList()
-                            }
-                        })
+
                     },
                 })
             },

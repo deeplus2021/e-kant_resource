@@ -135,7 +135,8 @@ export default {
         }
     },
     ymdhis2hi(str0, str){
-        const s_datetime = (new Date(str0 + " 00:00:00")).getTime()
+        str = str.replace(' ', 'T')
+        const s_datetime = (new Date(str0 + "T00:00:00")).getTime()
         const r_datetime =  (new Date(str)).getTime()
         let diff = parseInt((r_datetime - s_datetime) / (60 * 1000))
         const h = parseInt(diff / 60)
@@ -143,7 +144,8 @@ export default {
         return ((h < 10 && h >= 0) ? ('0' + h) : h) + ":" + ((i < 10 && i >= 0) ? ('0' + i) : i);
     },
     ymdhis2num(str0, str){
-        const s_datetime = (new Date(str0 + " 00:00:00")).getTime()
+        str = str.replace(' ', 'T')
+        const s_datetime = (new Date(str0 + "T00:00:00")).getTime()
         const r_datetime =  (new Date(str)).getTime()
         return parseInt((r_datetime - s_datetime) / (60 * 1000))
     }

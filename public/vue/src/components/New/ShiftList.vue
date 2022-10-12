@@ -79,17 +79,6 @@
             toCancel() {
                 this.$emit("toCancel")
             },
-            getStaffList(shift_date) {
-                let params = {
-                    field_id: this.field_id,
-                    shift_date: shift_date,
-                }
-                getStaffList(params).then(res => {
-                    if (res.data.status == "success") {
-                        this.staff_list = res.data.result
-                    }
-                })
-            },
             getShiftInfoList() {
                 this.loading = true
                 this.getPostTimes()
@@ -97,15 +86,25 @@
                     field_id: this.field_id,
                     shift_date: this.$utils.Datetimes.getymd(this.shift_date),
                 }
-                this.getStaffList(this.$utils.Datetimes.getymd(this.shift_date))
-                getShiftInfoList(params).then(res => {
-                    this.loading = false;
+                let staff_params = {
+                    field_id: this.field_id,
+                    shift_date: this.$utils.Datetimes.getymd(this.shift_date),
+                }
+                this.$set(this, "staff_list", [])
+                this.$set(this, "shift_list", [])
+                getStaffList(staff_params).then(res => {
                     if (res.data.status == "success") {
-                        this.shift_list = res.data.result
-                        this.$refs.refScheduleView.setScrollTop(560);
-                        this.copy_shift_list = []
+                        getShiftInfoList(params).then(res1 => {
+                            this.loading = false;
+                            if (res1.data.status == "success") {
+                                this.$set(this, "staff_list", res.data.result)
+                                this.$set(this, "shift_list", res1.data.result)
+                                this.$refs.refScheduleView.setScrollTop(560);
+                                this.copy_shift_list = []
+                            }
+                        }).catch((error) => {this.loading = false;})
                     }
-                }).catch((error) => {this.loading = false;})
+                })
             },
             getPostTimes() {
                 let params = {

@@ -171,12 +171,26 @@
                     {
                         title: '前日確認',
                         align: 'center',
-                        key:'yesterday_checked_at'
+                        key:'yesterday_checked_at',
+                        render: (h, params) => {
+                            let str = '前日未確認'
+                            if(params.row.yesterday_checked_at){
+                                str = '前日確認済'
+                            }
+                            return h('span', str)
+                        }
                     },
                     {
                         title: '起床確認',
                         align: 'center',
-                        key:'today_checked_at'
+                        key:'today_checked_at',
+                        render: (h, params) => {
+                            let str = '当日未確認'
+                            if(params.row.today_checked_at){
+                                str = '当日確認済'
+                            }
+                            return h('span', str)
+                        }
                     },
                     {
                         title: '勤務時間',
@@ -198,6 +212,37 @@
                                 time = params.row.night_break_time ? this.$utils.Datetimes.num2hi(params.row.night_break_time):''
                             }
                             return h('span', time)
+                        }
+                    },
+                    {
+                        title: "スタッフの状況",
+                        align: "center",
+                        render: (h, params) => {
+                            let color = "#f66"
+                            if(params.row.staff_status_id == 0){
+                                color = "#666"
+                            }
+                            else if(params.row.staff_status_id == 1){
+                                color = "#dd3"
+                            }
+                            else if(params.row.staff_status_id == 2){
+                                color = "#66f"
+                            }
+                            else if(params.row.staff_status_id == 3){
+                                color = "#3d3"
+                            }
+                            else if(params.row.staff_status_id == 4){
+                                color = "#666"
+                            }
+                            else if(params.row.staff_status_id == 5){
+                                color = "#666"
+                            }
+
+                            return h('span', {
+                                style: {
+                                    color: color
+                                },
+                            }, params.row.status_name ? params.row.status_name : "警告")
                         }
                     },
                 ],
