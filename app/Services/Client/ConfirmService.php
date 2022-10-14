@@ -31,6 +31,9 @@ class ConfirmService
         $shift = Shift::find($params["shift_id"]);
         $shift->today_checked_at = now();
         $shift->health_status = $params["health_status"];
+        if($shift->staff_status_id == config('constants.staff_status.arrived')){
+            return;
+        }
         $shift->staff_status_id = config('constants.staff_status.already');
         if(!$params["health_status"]){
             $shift->staff_status_id = config('constants.staff_status.condition');

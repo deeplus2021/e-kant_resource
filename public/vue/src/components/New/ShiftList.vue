@@ -22,8 +22,11 @@
                 </Row>
             </Form>
             <Row :gutter="16">
-                <Col span="6">
+                <Col span="12">
                     <Button type="info"  @click="addShift">新 規</Button>
+                </Col>
+                <Col span="12" style="text-align: right">
+                  <Button type="error"  @click="deleteAllShift">一括削除</Button>
                 </Col>
             </Row>
             <ScheduleView ref="refScheduleView" :shift_select_date="shift_date" :shift_list="shift_list" :staff_list="staff_list" :post_times="post_times" :loading="loading"></ScheduleView>
@@ -44,7 +47,7 @@
     import ScheduleView from '@/components/Schedule/ScheduleView.vue'
     import {
         getShiftInfo,
-        deleteShifts,
+        deleteAllShifts,
         getShiftInfoList,
         getPostTimes,
         getStaffList,
@@ -141,6 +144,30 @@
                         ke_time: null
                     }
                 )
+            },
+            deleteAllShift(){
+              this.$Modal.confirm({
+                title: '一括削除',
+                content: '一括削除しますか？',
+                okText: "はい",
+                cancelText: "いいえ",
+                onOk: () => {
+                  let params = {
+                    field_id: this.field_id,
+                    shift_date: this.$utils.Datetimes.getymd(this.shift_date)
+                  }
+                  this.loading = true;
+                  deleteAllShifts(params).then((res)=>{
+                    this.loading = false
+                    if(res.data.status=="success"){
+                      this.$Message.success('成功');
+                      this.toCancel()
+                    }
+                  }).catch((error) => {this.loading = false})
+                },
+                onCancel: () => {
+                },
+              });
             },
             updateShiftList(){
                 if(this.shift_list.length === 0) return

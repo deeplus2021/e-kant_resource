@@ -105,6 +105,7 @@ Route::prefix('v1')->group(function(){
             Route::post('add-shift', [ShiftMasterController::class, 'addShift'])->name('api.shift_master.addShifts');
             Route::post('update-shift', [ShiftMasterController::class, 'updateShift'])->name('api.shift_master.updateShifts');
             Route::post('delete-shifts', [ShiftMasterController::class, 'deleteShifts'])->name('api.shift_master.deleteShifts');
+            Route::post('delete-all-shifts', [ShiftMasterController::class, 'deleteAllShifts'])->name('api.shift_master.deleteAllShifts');
             Route::get('get-shift-list', [ShiftMasterController::class, 'getShiftList'])->name('api.shift_master.getShiftList');
             Route::post('update-shift-list', [ShiftMasterController::class, 'updateShiftList'])->name('api.shift_master.updateShiftList');
             Route::post('check-staff-holiday', [ShiftMasterController::class, 'checkStaffHoliday'])->name('api.shift_master.checkStaffHoliday');

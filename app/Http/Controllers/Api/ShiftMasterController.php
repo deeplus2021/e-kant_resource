@@ -357,6 +357,42 @@ class ShiftMasterController extends Controller
         $responseData->status = self::SUCCESS;
         return response()->json($responseData);
     }
+    public function deleteAllShifts(Request $request){
+        $params = $request->all();
+        $validator = Validator::make($params,
+            [
+                'field_id' => ['required', 'exists:t_field,id'],
+                'shift_date' => ['required', 'date_format:Y-m-d']
+            ]);
+
+        $responseData = new ApiResponseData($request);
+
+        if ($validator->fails()) {
+            $responseData->status = self::ERROR;
+            $responseData->message = implode(" ",$validator->messages()->all());
+            return response()->json($responseData);
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $this->service->deleteAllShifts($params);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+
+            $responseData->status = self::ERROR;
+            $responseData->message = $e->getMessage();
+
+            return response()->json($responseData);
+        }
+
+        DB::commit();
+
+        $responseData->message = __("common.response.success");
+        $responseData->status = self::SUCCESS;
+        return response()->json($responseData);
+    }
 
     public function getShiftList(Request $request)
     {

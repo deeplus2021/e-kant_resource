@@ -131,7 +131,7 @@
                                 </td>
                                 <td>
                                     <Select v-model="item.email_time" style="width: 65px;">
-                                        <Option v-for="(val, index) in [0, 15, 30, 45, 60, 75, 90, 105, 120]" :value="val" :key="index">{{val}}</Option>
+                                        <Option v-for="(val, index) in [0, 30, 45, 60, 75, 90, 105, 120]" :value="val" :key="index">{{val}}</Option>
                                     </Select>
                                 </td>
                                 <td>

@@ -206,6 +206,10 @@ class ShiftMasterService
     {
         Shift::whereIn("id", $params["shift_ids"])->delete();
     }
+    public function deleteAllShifts($params)
+    {
+        Shift::where("field_id", $params["field_id"])->where("shift_date", $params["shift_date"])->delete();
+    }
 
     public function getShiftList($params)
     {

@@ -87,6 +87,13 @@ export function deleteShifts(data) {
         data: data
     })
 }
+export function deleteAllShifts(data) {
+  return request({
+    url: 'api/v1/shift-master/delete-all-shifts',
+    method: 'post',
+    data: data
+  })
+}
 
 export function updateShiftList(data) {
     return request({
