@@ -16,6 +16,7 @@ class CreateTShiftTable extends Migration
         Schema::create('t_shift', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("staff_id")->comment('スタッフコード');
+            $table->unsignedBigInteger("alter_id")->nullable()->comment('代行シフト');
             $table->unsignedBigInteger("field_id")->comment('現場コード');
 
             $table->unsignedBigInteger("admin_id")->nullable()->comment('承認者');

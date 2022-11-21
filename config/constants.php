@@ -11,7 +11,8 @@ return [
         'late_time' => 1,
         'early_time' => 1,
         'over_time' => 15,
-        'start_distance' => 0.2 // km
+        'start_distance' => 0.2, // km
+        'alter_time' => 60
     ],
     'staff_roles' => [
         'super_admin' => 1,
@@ -27,6 +28,10 @@ return [
         'space' => 5,
         'warning' => 6,
         'condition' => 7,
+        'yesterday_check' => 8,
+        'yesterday_no_check' => 9,
+        'today_no_check' => 10,
+        'no_shift' => 11
     ],
     'admin_notify' => [
         'confirm_yesterday' => 1,

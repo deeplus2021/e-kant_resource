@@ -58,6 +58,7 @@
                         align: 'center',
                         key: 's_time',
                         render: (h, params) => {
+                          if(params.row.no_shift == 0)
                             return h('span', this.$utils.Datetimes.num2hi(params.row.s_time))
                         }
                     },
@@ -66,6 +67,7 @@
                         align: 'center',
                         key: 'e_time',
                         render: (h, params) => {
+                          if(params.row.no_shift == 0)
                             return h('span', this.$utils.Datetimes.num2hi(params.row.e_time))
                         }
                     },
@@ -78,31 +80,40 @@
                         title: "スタッフの状況",
                         align: "center",
                         render: (h, params) => {
+                          if(params.row.no_shift == 0){
                             let color = "#f66"
-                            if(params.row.staff_status_id == 0){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 1){
-                                color = "#dd3"
+
+                            if(params.row.staff_status_id == 1){
+                              color = "#dd3"
                             }
                             else if(params.row.staff_status_id == 2){
-                                color = "#66f"
+                              color = "#66f"
                             }
                             else if(params.row.staff_status_id == 3){
-                                color = "#3d3"
+                              color = "#3d3"
                             }
-                            else if(params.row.staff_status_id == 4){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 5){
-                                color = "#666"
+                            else if(params.row.staff_status_id == 4 || params.row.staff_status_id == 5 || params.row.staff_status_id == 8){
+                              color = "#666"
                             }
 
                             return h('span', {
-                                style: {
-                                    color: color
-                                },
+                              style: {
+                                color: color
+                              },
                             }, params.row.status_name ? params.row.status_name : "警告")
+                          }
+                          else{
+                            let color = "#3d3"
+                            if(params.row.leave_checked_at != null){
+                              color = "#666"
+                            }
+                            return h('span', {
+                              style: {
+                                color: color
+                              },
+                            }, params.row.status_name ? params.row.status_name : "警告")
+                          }
+
                         }
                     },
                     {
@@ -155,7 +166,7 @@
                         key: "s_time",
                         align: 'center',
                         render: (h, params) => {
-                            if(!params.row.id){return ''}
+                            if(!params.row.id || params.row.no_shift == 1){return ''}
                             return h('div', this.$utils.Datetimes.num2hi(params.row.s_time) + "~" + this.$utils.Datetimes.num2hi(params.row.e_time) )
                         }
                     },
@@ -173,11 +184,13 @@
                         align: 'center',
                         key:'yesterday_checked_at',
                         render: (h, params) => {
+                          if(params.row.no_shift == 0){
                             let str = '前日未確認'
                             if(params.row.yesterday_checked_at){
-                                str = '前日確認済'
+                              str = '前日確認済'
                             }
                             return h('span', str)
+                          }
                         }
                     },
                     {
@@ -185,64 +198,78 @@
                         align: 'center',
                         key:'today_checked_at',
                         render: (h, params) => {
+                          if(params.row.no_shift == 0){
                             let str = '当日未確認'
                             if(params.row.today_checked_at){
-                                str = '当日確認済'
+                              str = '当日確認済'
                             }
                             return h('span', str)
+                          }
                         }
                     },
                     {
                         title: '勤務時間',
                         align: 'center',
                         render: (h, params) => {
-                            const time = (params.row.arrive_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.arrive_checked_at):"") + "~" + (params.row.leave_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.leave_checked_at):"")
-                            return h('span', time)
+                            if(params.row.no_shift != 0 || params.row.staff_status_id != 11){
+                              const time = (params.row.arrive_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.arrive_checked_at):"") + "~" + (params.row.leave_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.leave_checked_at):"")
+                              return h('span', time)
+                            }
                         }
                     },
                     {
                         title: '勤務休憩時間',
                         align: 'center',
                         render: (h, params) => {
+                          if(params.row.no_shift != 0 || params.row.staff_status_id != 11){
                             let time = ''
                             if(params.row.s_time < 21* 60){
-                                time = params.row.break_time ? this.$utils.Datetimes.num2hi(params.row.break_time) : ''
+                              time = params.row.break_time ? this.$utils.Datetimes.num2hi(params.row.break_time) : ''
                             }
                             else{
-                                time = params.row.night_break_time ? this.$utils.Datetimes.num2hi(params.row.night_break_time):''
+                              time = params.row.night_break_time ? this.$utils.Datetimes.num2hi(params.row.night_break_time):''
                             }
                             return h('span', time)
+                          }
                         }
                     },
                     {
                         title: "スタッフの状況",
                         align: "center",
                         render: (h, params) => {
+                          if(params.row.no_shift == 0){
                             let color = "#f66"
-                            if(params.row.staff_status_id == 0){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 1){
-                                color = "#dd3"
+                            if(params.row.staff_status_id == 1){
+                              color = "#dd3"
                             }
                             else if(params.row.staff_status_id == 2){
-                                color = "#66f"
+                              color = "#66f"
                             }
                             else if(params.row.staff_status_id == 3){
-                                color = "#3d3"
+                              color = "#3d3"
                             }
-                            else if(params.row.staff_status_id == 4){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 5){
-                                color = "#666"
+                            else if(params.row.staff_status_id == 4 || params.row.staff_status_id == 5 || params.row.staff_status_id == 8){
+                              color = "#666"
                             }
 
                             return h('span', {
-                                style: {
-                                    color: color
-                                },
+                              style: {
+                                color: color
+                              },
                             }, params.row.status_name ? params.row.status_name : "警告")
+                          }
+                          else{
+                            let color = "#3d3"
+                            if(params.row.leave_checked_at != null){
+                              color = "#666"
+                            }
+                            return h('span', {
+                              style: {
+                                color: color
+                              },
+                            }, params.row.status_name ? params.row.status_name : "警告")
+                          }
+
                         }
                     },
                 ],

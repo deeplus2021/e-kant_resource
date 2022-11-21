@@ -4,6 +4,7 @@
 namespace App\Services\Client;
 
 
+use App\Models\Field;
 use App\Models\Shift;
 use App\Models\Staff;
 use App\Models\StaffAddress;
@@ -22,7 +23,7 @@ class ConfirmService
             $shift->staff_address_id = $params["staff_address_id"];
         }
         $shift->yesterday_checked_at = now();
-        $shift->staff_status_id = config('constants.staff_status.already');
+        $shift->staff_status_id = config('constants.staff_status.yesterday_check');
         $shift->save();
     }
 
@@ -31,7 +32,10 @@ class ConfirmService
         $shift = Shift::find($params["shift_id"]);
         $shift->today_checked_at = now();
         $shift->health_status = $params["health_status"];
-        if($shift->staff_status_id == config('constants.staff_status.arrived')){
+        if($shift->staff_status_id == config('constants.staff_status.arrived')
+            || $shift->staff_status_id == config('constants.staff_status.started')
+            || $shift->staff_status_id == config('constants.staff_status.leaved')
+            || $shift->staff_status_id == config('constants.staff_status.no_shift')){
             return;
         }
         $shift->staff_status_id = config('constants.staff_status.already');
@@ -64,7 +68,9 @@ class ConfirmService
         $shift = Shift::find($params["shift_id"]);
         $shift->start_checked_at = now();
 
-        if($shift->staff_status_id == config('constants.staff_status.arrived') || $shift->staff_status_id == config('constants.staff_status.leaved')){
+        if($shift->staff_status_id == config('constants.staff_status.arrived')
+            || $shift->staff_status_id == config('constants.staff_status.leaved')
+            || $shift->staff_status_id == config('constants.staff_status.no_shift')){
             return true;
         }
 
@@ -193,7 +199,7 @@ class ConfirmService
         $shift->leave_checked_at = $leave_checked_at;
         $e_time = \Carbon\Carbon::parse($shift->shift_date)->addMinutes($shift->e_time);
         //早退申請
-        if($leave_checked_at->diffInMinutes($e_time, false) > 0){
+        if(!isset($shift->alter_id) && $leave_checked_at->diffInMinutes($e_time, false) > 0){
             $shift->e_leave_at = now();
             $shift->e_leave_checked_at = null;
 
@@ -211,7 +217,7 @@ class ConfirmService
                 $super_admin->notify(new StaffRequested($object));
             }
         }
-        else if($e_time->diffInMinutes($leave_checked_at, false) > config('constants.system.over_time')){
+        else if(!isset($shift->alter_id) && $e_time->diffInMinutes($leave_checked_at, false) > config('constants.system.over_time')){
             $shift->e_leave_at = null;
             $shift->e_leave_checked_at = null;
             $shift->over_time_at = $leave_checked_at;
@@ -232,7 +238,9 @@ class ConfirmService
             }
         }
         else{
-            $shift->staff_status_id = config('constants.staff_status.leaved');
+            if(!isset($shift->alter_id)){
+                $shift->staff_status_id = config('constants.staff_status.leaved');
+            }
             $shift->e_leave_at = null;
             $shift->e_leave_checked_at = null;
         }

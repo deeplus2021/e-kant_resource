@@ -41,31 +41,14 @@ class AutoNotifyService
                             } catch (\Exception $e) {
                                 Log::debug($staff->email . ' confirm_yesterday: Error ' . $e->getMessage());
                             }
-
-
                             $notify_count += 1;
-//                            if ($i == 2) {
-//                                $object = array(
-//                                    'type' => '未確認通知',
-//                                    'sender' => $staff->name,
-//                                    'content' => "前日勤怠通知メッセージを確認していません。",
-//                                    "shift_ids" => [$shift->id]
-//                                );
-//                                $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
-//                                $field_admins = $shift->field->cstaffs;
-//                                foreach ($field_admins as $field_admin) {
-//                                    $field_admin->notify(new StaffNoChecked($object));
-//                                }
-//                                foreach ($super_admins as $super_admin) {
-//                                    $super_admin->notify(new StaffNoChecked($object));
-//                                }
-//                            }
                         }
                     }
                     $warning_time = -210;
                     if ($now->gt(\Carbon\Carbon::tomorrow()->addMinutes($warning_time - 1)) && $now->lte(\Carbon\Carbon::tomorrow()->addMinutes($warning_time + 1))) {
 
                         Log::debug('confirm_yesterday error:' . $now . "==" . \Carbon\Carbon::tomorrow()->addMinutes($warning_time));
+                        $shift->staff_status_id = config('constants.staff_status.yesterday_no_check');
                         $shift->yesterday_no_check = 1;
                         $shift->save();
                         $object = array(
@@ -76,20 +59,19 @@ class AutoNotifyService
                         );
                         $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
                         $field_admins = $shift->field->cstaffs;
-                        foreach ($field_admins as $field_admin) {
-                            $field_admin->notify(new StaffNoChecked($object));
-                        }
-                        foreach ($super_admins as $super_admin) {
-                            $super_admin->notify(new StaffNoChecked($object));
-                        }
+//                        foreach ($field_admins as $field_admin) {
+//                            $field_admin->notify(new StaffNoChecked($object));
+//                        }
+//                        foreach ($super_admins as $super_admin) {
+//                            $super_admin->notify(new StaffNoChecked($object));
+//                        }
                     }
                 }
             } else {
                 $staff_address = null;
                 if (isset($shift->staff_address_id)) {
                     $staff_address = $shift->staffAddress;
-                }
-                else{
+                } else {
                     $staff_address = StaffAddress::where("staff_id", $staff->id)
                         ->where("field_id", $shift->field_id)
                         ->orderBy("created_at", "desc")
@@ -97,8 +79,13 @@ class AutoNotifyService
                 }
 
                 if (isset($staff_address)) {
-                    if (isset($staff_address->required_time) && isset($staff_address->email_time) && $staff_address->email_time != 0) {
-                        if ($staff->today_flag && !isset($shift->today_checked_at)) {
+                    if (isset($staff_address->required_time) && isset($staff_address->email_time)) {
+                        if ($staff->today_flag && !isset($shift->today_checked_at) && $staff_address->email_time != 0
+                        && !(isset($shift->staff_status_id) && ($shift->staff_status_id == config('constants.staff_status.already')
+                                    || $shift->staff_status_id == config('constants.staff_status.started')
+                                    || $shift->staff_status_id == config('constants.staff_status.arrived')
+                                    || $shift->staff_status_id == config('constants.staff_status.leaved')
+                                    || $shift->staff_status_id == config('constants.staff_status.no_shift')))) {
                             //$alert_count = max(2, intval($staff_address->email_time / 10)) + 1;
                             $alert_count = 3;
                             for ($i = 0; $i < $alert_count; $i++) {
@@ -114,22 +101,6 @@ class AutoNotifyService
                                     }
 
                                     $notify_count += 1;
-//                                    if ($i == $alert_count - 1) {
-//                                        $object = array(
-//                                            'type' => '未確認通知',
-//                                            'sender' => $staff->name,
-//                                            'content' => "当日勤怠通知メッセージを確認していません。",
-//                                            "shift_ids" => [$shift->id]
-//                                        );
-//                                        $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
-//                                        $field_admins = $shift->field->cstaffs;
-//                                        foreach ($field_admins as $field_admin) {
-//                                            $field_admin->notify(new StaffNoChecked($object));
-//                                        }
-//                                        foreach ($super_admins as $super_admin) {
-//                                            $super_admin->notify(new StaffNoChecked($object));
-//                                        }
-//                                    }
                                 }
                             }
                             $warning_time = $s_time - $staff_address->required_time - $staff_address->email_time + 25;
@@ -141,21 +112,26 @@ class AutoNotifyService
                                     "shift_ids" => [$shift->id]
                                 );
                                 $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
+                                $shift->staff_status_id = config('constants.staff_status.today_no_check');
+                                $shift->save();
                                 $field_admins = $shift->field->cstaffs;
-                                foreach ($field_admins as $field_admin) {
-                                    $field_admin->notify(new StaffNoChecked($object));
-                                }
-                                foreach ($super_admins as $super_admin) {
-                                    $super_admin->notify(new StaffNoChecked($object));
-                                }
+//                                foreach ($field_admins as $field_admin) {
+//                                    $field_admin->notify(new StaffNoChecked($object));
+//                                }
+//                                foreach ($super_admins as $super_admin) {
+//                                    $super_admin->notify(new StaffNoChecked($object));
+//                                }
                             }
                         }
-                        if($staff->today_flag && !isset($shift->today_checked_at)){
+                        if (!(isset($shift->staff_status_id) && ($shift->staff_status_id == config('constants.staff_status.started')
+                                    || $shift->staff_status_id == config('constants.staff_status.arrived')
+                                    || $shift->staff_status_id == config('constants.staff_status.leaved')
+                                    || $shift->staff_status_id == config('constants.staff_status.no_shift')))){
                             $alert_count = 3;
-                            for ($i = 3; $i > 0; $i--){
+                            for ($i = 3; $i > 0; $i--) {
                                 $warning_time = $s_time - $staff_address->required_time - $i * 5;
                                 if ($now->gt(\Carbon\Carbon::today()->addMinutes($warning_time - 1)) && $now->lte(\Carbon\Carbon::today()->addMinutes($warning_time + 1))) {
-                                    if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id == config('constants.staff_status.already')) {
+                                    if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id != config('constants.staff_status.started')) {
                                         $type = config('constants.admin_notify.confirm_start');
                                         try {
                                             if (isset($staff->fcm_token)) $staff->notify(new AdminStarted($type, $shift));
@@ -164,33 +140,33 @@ class AutoNotifyService
                                             Log::debug($staff->email . ' confirm_start: Error ' . $e->getMessage());
                                         }
                                     }
+                                    if ($i + 2 == $alert_count) {
+                                        if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id != config('constants.staff_status.started')) {
+                                            $shift->staff_status_id = config('constants.staff_status.warning');
+                                            $shift->save();
+
+                                            Log::debug('shift_id:' . $shift->id . '   ' . $staff->email . ' Sent Mail: Not Start ');
+
+                                            $object = array(
+                                                'type' => 'スタッフの状況警告通知',
+                                                'sender' => $staff->name,
+                                                'content' => "自宅を出発していません。",
+                                                "shift_ids" => [$shift->id]
+                                            );
+                                            $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
+                                            $field_admins = $shift->field->cstaffs;
+//                                            foreach ($field_admins as $field_admin) {
+//                                                $field_admin->notify(new StaffNoStart($object));
+//                                            }
+//                                            foreach ($super_admins as $super_admin) {
+//                                                $super_admin->notify(new StaffNoStart($object));
+//                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
 
-                        if ($now->gt(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 9)) && $now->lte(\Carbon\Carbon::today()->addMinutes($s_time - $staff_address->required_time + 11))) {
-                            if (!isset($shift->staff_status_id) || empty($shift->staff_status_id) || $shift->staff_status_id == config('constants.staff_status.already')) {
-                                $shift->staff_status_id = config('constants.staff_status.warning');
-                                $shift->save();
-
-                                Log::debug('shift_id:' . $shift->id . '   ' . $staff->email . ' Sent Mail: Not Start ');
-
-                                $object = array(
-                                    'type' => 'スタッフの状況警告通知',
-                                    'sender' => $staff->name,
-                                    'content' => "自宅を出発していません。",
-                                    "shift_ids" => [$shift->id]
-                                );
-                                $super_admins = Staff::where("staff_role_id", config('constants.staff_roles.super_admin'))->get();
-                                $field_admins = $shift->field->cstaffs;
-                                foreach ($field_admins as $field_admin) {
-                                    $field_admin->notify(new StaffNoStart($object));
-                                }
-                                foreach ($super_admins as $super_admin) {
-                                    $super_admin->notify(new StaffNoStart($object));
-                                }
-                            }
-                        }
                     }
                 }
             }

@@ -50,6 +50,7 @@
                         align: 'center',
                         key: 's_time',
                         render: (h, params) => {
+                          if(params.row.staff_status_id != 11)
                             return h('span', (params.row.arrive_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.arrive_checked_at):"") + "~" + (params.row.leave_checked_at ? this.$utils.Datetimes.ymdhis2hi(params.row.shift_date, params.row.leave_checked_at):""))
                         }
                     },
@@ -57,6 +58,7 @@
                         title: '休憩時間',
                         align: 'center',
                         render: (h, params) => {
+                          if(params.row.staff_status_id != 11)
                             return h('span', params.row.break_time ? this.$utils.Datetimes.num2hi(params.row.break_time) : "")
                         }
                     },
@@ -65,23 +67,17 @@
                         align: "center",
                         render: (h, params) => {
                             let color = "#f66"
-                            if(params.row.staff_status_id == 0){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 1){
-                                color = "#dd3"
+                            if(params.row.staff_status_id == 1){
+                              color = "#dd3"
                             }
                             else if(params.row.staff_status_id == 2){
-                                color = "#66f"
+                              color = "#66f"
                             }
                             else if(params.row.staff_status_id == 3){
-                                color = "#3d3"
+                              color = "#3d3"
                             }
-                            else if(params.row.staff_status_id == 4){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 5){
-                                color = "#666"
+                            else if(params.row.staff_status_id == 4 || params.row.staff_status_id == 5 || params.row.staff_status_id == 8){
+                              color = "#666"
                             }
 
                             return h('span', {

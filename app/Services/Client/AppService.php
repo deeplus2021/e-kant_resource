@@ -68,6 +68,9 @@ class AppService
         }
 
         $data->staff_field = $staff_field;
+        $user_field_ids = $staff->staffFields->pluck('field_id')->toArray();
+        $query = DB::table("t_field")->select("id", "name", "latitude", "longitude")->whereIn("id", $user_field_ids);
+        $data->staff_field_list = $query->get();
 
         return $data;
     }

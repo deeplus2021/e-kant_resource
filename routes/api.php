@@ -162,6 +162,7 @@ Route::prefix('v1')->group(function(){
             Route::post('update-shift-list', [ShiftController::class, 'updateShiftList'])->name('api.client.updateShiftList');
             Route::post('register-status', [ShiftController::class, 'registerStatus'])->name('api.client.registerStatus');
             Route::post('change-check-time', [ShiftController::class, 'changeCheckTime'])->name('api.client.changeCheckTime');
+            Route::post('get-alter-shift', [ShiftController::class, 'getAlterShift'])->name('api.get-alter-shift');
 
             Route::post('confirm-yesterday', [ConfirmController::class, 'confirmYesterday'])->name('api.client.confirmYesterday');
             Route::post('confirm-today', [ConfirmController::class, 'confirmToday'])->name('api.client.confirmToday');

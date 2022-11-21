@@ -237,4 +237,39 @@ class ShiftController extends Controller
         $responseData->status = self::SUCCESS;
         return response()->json($responseData);
     }
+
+    public function getAlterShift(Request $request){
+        $params = $request->all();
+        $validator = Validator::make($params,
+            [
+                'field_id' => ['required', 'exists:t_field,id']
+            ]);
+
+        $responseData = new ApiResponseData($request);
+
+        if ($validator->fails()) {
+            $responseData->status = self::ERROR;
+            $errors = $validator->errors();
+            if ($errors->has('t_field')) {
+                $responseData->message =  self::ERR_INVALID_FIELD_ID;
+            }
+            else{
+                $responseData->message =  self::ERR_INVALID_UNKNOWN;
+            }
+            return response()->json($responseData);
+        }
+
+        $result = $this->service->getAlterShift($params);
+
+        if(!$result) {
+            $responseData->message = self::ERR_INVALID_UNKNOWN;
+            $responseData->status = self::ERROR;
+            return response()->json($responseData);
+        }
+        $responseData->result = $result;
+        $responseData->message = __("common.response.success");
+        $responseData->status = self::SUCCESS;
+        return response()->json($responseData);
+
+    }
 }

@@ -24,7 +24,7 @@ class OpenStatusService
         $now_date = \Carbon\Carbon::today();
         $now_time = \Carbon\Carbon::now()->hour * 60 + \Carbon\Carbon::now()->minute;
 
-        if($shift_date == $now_date){
+        if($shift_date >= $now_date){
             $query = DB::table("t_field AS f")
                 ->select(
                     "f.id",
@@ -41,7 +41,7 @@ class OpenStatusService
                 ->leftJoinSub(
                     DB::table("t_shift")
                         ->select(
-                            DB::raw("SUBSTRING_INDEX(GROUP_CONCAT(id ORDER BY s_time), ',', 1) AS id"),
+                            DB::raw("SUBSTRING_INDEX(GROUP_CONCAT(id ORDER BY s_time, id), ',', 1) AS id"),
                             "field_id"
                         )
                         ->whereDate("shift_date", $shift_date)
@@ -63,7 +63,7 @@ class OpenStatusService
             $records = $query->paginate($limit);
         }
         else{
-            $status = $shift_date < $now_date ? "終了" : "未開始";
+            $status = "終了";
             $query = DB::table("t_field AS f")
                 ->select(
                     "f.id",
@@ -118,10 +118,12 @@ class OpenStatusService
             ->orderBy("id")
             ->limit(1)
             ->get();
-        if($shift_date != $now_date){
-            $status = $shift_date < $now_date ? "終了" : "未開始";
-            $records[0]['status']['name'] = $status;
-            $records[0]['status']['id'] = 0;
+        if($shift_date < $now_date){
+            $status = "終了";
+            if(isset($records[0]['status'])){
+                $records[0]['status']['name'] = $status;
+                $records[0]['staff_status_id'] = 0;
+            }
         }
         return $records;
     }

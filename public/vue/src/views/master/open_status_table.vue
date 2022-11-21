@@ -64,10 +64,7 @@
                         key: 'status',
                         render:(h, params) => {
                             let color = "#f66"
-                            if(params.row.staff_status_id == 0){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 1){
+                            if(params.row.staff_status_id == 1){
                                 color = "#dd3"
                             }
                             else if(params.row.staff_status_id == 2){
@@ -76,10 +73,7 @@
                             else if(params.row.staff_status_id == 3){
                                 color = "#3d3"
                             }
-                            else if(params.row.staff_status_id == 4){
-                                color = "#666"
-                            }
-                            else if(params.row.staff_status_id == 5){
+                            else if(params.row.staff_status_id == 4 || params.row.staff_status_id == 5 || params.row.staff_status_id == 8){
                                 color = "#666"
                             }
 
@@ -87,7 +81,7 @@
                                 style: {
                                     color: color
                                 },
-                            }, params.row.status ? params.row.status : (params.row.staff_name ? "警告(自宅を出てない)" : ""))
+                            }, params.row.status ? params.row.status : (params.row.staff_name ? "警告" : ""))
                         }
                     },
                     {
